@@ -57,15 +57,23 @@ export const top: AppRouteHandler<TopProductsRoute> = async (c) => {
   });
 
   // Transform the data to match TopProductSchema
-  const transformedProducts = products.map((product) => {
+  const transformedProducts = products.map((product: { 
+    id: string; 
+    name: string; 
+    orderItems: Array<{ 
+      order: { id: string }; 
+      price: number; 
+      quantity: number 
+    }> 
+  }) => {
     // Get unique orders for this product
     const uniqueOrders = new Set(
-      product.orderItems.map((item: any) => item.order.id)
+      product.orderItems.map((item) => item.order.id)
     );
 
     // Calculate total amount (assuming price * quantity per order item)
     const total = product.orderItems.reduce(
-      (sum, item) => sum + item.price * item.quantity,
+      (sum: number, item) => sum + item.price * item.quantity,
       0
     );
 

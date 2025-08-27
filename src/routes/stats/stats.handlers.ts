@@ -3,6 +3,7 @@
 /* eslint-disable style/arrow-parens */
 import { startOfDay, subDays, subWeeks, subMonths } from "date-fns";
 import { getAuth } from "@hono/clerk-auth";
+import { Category, Product } from "@prisma/client";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 
 import type { AppRouteHandler } from "@/lib/types";
@@ -32,20 +33,25 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
   const products = await prisma.product.findMany();
   const totalCategories = categories.length;
   const totalProducts = products.length;
-  const productsPerCategory = categories.map((category) => ({
+  interface CategoryWithProducts extends Category {
+    products: Product[];
+  }
+
+  const productsPerCategory = categories.map((category: CategoryWithProducts) => ({
     categoryId: category.id,
     categoryName: category.name,
     productCount: products.filter(
-      (product) => product.categoryId === category.id
+      (product: Product) => product.categoryId === category.id
     ).length,
   }));
 
   // Price statistics
-  const prices = products.map((product) => product.price);
-  const minPrice = Math.min(...prices);
-  const maxPrice = Math.max(...prices);
-  const avgPrice =
-    prices.reduce((sum, price) => sum + price, 0) / prices.length;
+  const prices = products.map((product: Product) => product.price);
+  const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+  const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
+  const avgPrice = prices.length > 0 
+    ? prices.reduce((sum: number, price: number) => sum + price, 0) / prices.length 
+    : 0;
 
   const stats = {
     totalCategories,

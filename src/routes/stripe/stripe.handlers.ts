@@ -6,7 +6,7 @@
 /* eslint-disable style/operator-linebreak */
 /* eslint-disable style/arrow-parens */
 
-import type { OrderStatus } from "@prisma/client";
+import { OrderStatus } from "@prisma/client";
 import type Stripe from "stripe";
 
 import { getAuth } from "@hono/clerk-auth";

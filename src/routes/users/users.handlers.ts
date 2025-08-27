@@ -58,16 +58,27 @@ export const customers: AppRouteHandler<CustomersRoute> = async (c) => {
       createdAt: true,
     },
   });
-  const res = customers.map((customer) => {
-    const c = {
-      ...customer,
-      orderCount: customer._count.orders,
+  interface CustomerWithOrderCount {
+    id: string;
+    email: string;
+    name: string;
+    image: string | null;
+    createdAt: Date;
+    _count: {
+      orders: number;
     };
-    const { _count, ...others } = c;
-    return {
-      ...others,
-    };
-  });
+  }
+
+  const res = customers.map((customer) => ({
+    id: customer.id,
+    clerkUserId: customer.clerkUserId,
+    email: customer.email,
+    name: customer.name,
+    image: customer.image,
+    orderCount: customer._count.orders,
+    createdAt: customer.createdAt.toISOString()
+  }));
+  
   return c.json(res);
 };
 
