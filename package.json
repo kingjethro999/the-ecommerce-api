@@ -7,12 +7,13 @@
   },
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "start": "node ./dist/src/index.js",
+    "start": "node -r dotenv/config ./dist/src/index.js",
     "vercel:dev": "npm run build && vercel dev",
     "lint": "eslint .",
     "lint:fix": "eslint --fix",
     "build": "rm -rf dist && prisma generate && tsc && tsc-alias",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate && npm run build",
+    "prestart": "prisma generate"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^7.3.0",

@@ -9,6 +9,10 @@
 .idea/shelf
 generated
 .vercel
+
+# Build output
+dist/
+!dist/prisma/schema.prisma
 # deps
 node_modules/
 
