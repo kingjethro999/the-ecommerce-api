@@ -3,7 +3,7 @@
 /* eslint-disable style/arrow-parens */
 import { startOfDay, subDays, subWeeks, subMonths } from "date-fns";
 import { getAuth } from "@hono/clerk-auth";
-import { Category, Product } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 
 import type { AppRouteHandler } from "@/lib/types";
@@ -33,20 +33,20 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
   const products = await prisma.product.findMany();
   const totalCategories = categories.length;
   const totalProducts = products.length;
-  interface CategoryWithProducts extends Category {
-    products: Product[];
-  }
+  type CategoryWithProducts = Prisma.CategoryGetPayload<{
+    include: { products: true }
+  }>;
 
   const productsPerCategory = categories.map((category: CategoryWithProducts) => ({
     categoryId: category.id,
     categoryName: category.name,
     productCount: products.filter(
-      (product: Product) => product.categoryId === category.id
+      (product: Prisma.ProductGetPayload<{}>) => product.categoryId === category.id
     ).length,
   }));
 
   // Price statistics
-  const prices = products.map((product: Product) => product.price);
+  const prices = products.map((product: Prisma.ProductGetPayload<{}>) => product.price);
   const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
   const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
   const avgPrice = prices.length > 0 

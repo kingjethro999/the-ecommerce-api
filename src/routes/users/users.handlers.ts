@@ -69,7 +69,7 @@ export const customers: AppRouteHandler<CustomersRoute> = async (c) => {
     };
   }
 
-  const res = customers.map((customer) => ({
+  const res = customers.map((customer: { id: string; clerkUserId: string; email: string; name: string; image: string | null; _count: { orders: number }; createdAt: Date }) => ({
     id: customer.id,
     clerkUserId: customer.clerkUserId,
     email: customer.email,
