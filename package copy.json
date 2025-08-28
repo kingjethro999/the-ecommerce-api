@@ -7,16 +7,20 @@
   },
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc && tsc-alias",
+    "start": "node -r dotenv/config ./dist/src/index.js",
+    "vercel:dev": "npm run build && vercel dev",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix",
+    "build": "rm -rf dist && prisma generate && tsc && tsc-alias",
     "postinstall": "prisma generate",
-    "start": "node -r dotenv/config ./dist/src/index.js"
+    "prestart": "prisma generate"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^7.3.0",
     "@hono/clerk-auth": "^3.0.1",
     "@hono/node-server": "^1.14.1",
     "@hono/zod-openapi": "^0.19.4",
-    "@prisma/client": "^6.15.0",
+    "@prisma/client": "^6.14.0",
     "@prisma/extension-accelerate": "^2.0.2",
     "@scalar/hono-api-reference": "^0.8.1",
     "bcryptjs": "^3.0.2",
@@ -39,7 +43,7 @@
     "@types/node": "^20.11.17",
     "eslint": "^9.24.0",
     "eslint-plugin-format": "^1.0.1",
-    "prisma": "^6.15.0",
+    "prisma": "^6.14.0",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.16",
     "typescript": "^5.8.3",

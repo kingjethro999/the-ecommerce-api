@@ -1,11 +1,15 @@
 import { serve } from "@hono/node-server";
 import app from "./app.js";
 import env from "./env.js";
-const port = env.PORT;
-serve({
+
+const port = process.env.PORT || env.PORT || 8000; // 👈 this line is key
+
+serve(
+  {
     fetch: app.fetch,
     port,
-}, (info) => {
-    // eslint-disable-next-line no-console
+  },
+  (info) => {
     console.log(`Server is running on http://localhost:${info.port}`);
-});
+  }
+);
