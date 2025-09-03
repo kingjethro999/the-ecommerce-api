@@ -160,7 +160,14 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
     );
   }
   const cats = await db
-    .select({ id: categories.id, name: categories.name, slug: categories.slug, image: categories.image })
+    .select({
+      id: categories.id,
+      name: categories.name,
+      slug: categories.slug,
+      image: categories.image,
+      isActive: categories.isActive,
+      departmentId: categories.departmentId,
+    })
     .from(categories)
     .where(eq(categories.departmentId, id));
 
@@ -195,7 +202,14 @@ export const getOneBySlug: AppRouteHandler<GetOneBySlugRoute> = async (c) => {
   // Special case: "general" department should list ALL categories
   if (slug === "general") {
     const cats = await db
-      .select({ name: categories.name, id: categories.id, slug: categories.slug, image: categories.image })
+      .select({
+        id: categories.id,
+        name: categories.name,
+        slug: categories.slug,
+        image: categories.image,
+        isActive: categories.isActive,
+        departmentId: categories.departmentId,
+      })
       .from(categories);
 
     const result = {
@@ -208,7 +222,14 @@ export const getOneBySlug: AppRouteHandler<GetOneBySlugRoute> = async (c) => {
 
   // Default behavior: categories only within this department
   const cats = await db
-    .select({ name: categories.name, id: categories.id, slug: categories.slug, image: categories.image })
+    .select({
+      id: categories.id,
+      name: categories.name,
+      slug: categories.slug,
+      image: categories.image,
+      isActive: categories.isActive,
+      departmentId: categories.departmentId,
+    })
     .from(categories)
     .where(eq(categories.departmentId, baseDepartment.id));
 

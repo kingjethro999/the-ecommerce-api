@@ -29,14 +29,25 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
       name: productsTable.name,
       slug: productsTable.slug,
       imageUrl: productsTable.imageUrl,
+      productImages: productsTable.productImages,
       price: productsTable.price,
-      discount: productsTable.discount,
-      stockQty: productsTable.stockQty,
+      frequentlyBoughtTogetherItemIds: productsTable.frequentlyBoughtTogetherItemIds,
+      summary: productsTable.summary,
+      description: productsTable.description,
       isActive: productsTable.isActive,
+      isFeatured: productsTable.isFeatured,
+      isDeal: productsTable.isDeal,
       createdAt: productsTable.createdAt,
+      updatedAt: productsTable.updatedAt,
       categoryId: productsTable.categoryId,
       brandId: productsTable.brandId,
       categoryName: categories.name,
+      categorySlug: categories.slug,
+      categoryImage: categories.image,
+      categoryIsActive: categories.isActive,
+      categoryDepartmentId: categories.departmentId,
+      categoryDescription: categories.description,
+      categoryBannerImage: categories.bannerImage,
       brandTitle: brands.title,
     })
     .from(productsTable)
@@ -49,12 +60,30 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
     name: r.name,
     slug: r.slug,
     imageUrl: r.imageUrl,
+    productImages: r.productImages ?? [],
     price: r.price,
+    frequentlyBoughtTogetherItemIds: r.frequentlyBoughtTogetherItemIds ?? [],
     discount: r.discount,
     stockQty: r.stockQty,
     isActive: r.isActive,
+    isFeatured: r.isFeatured,
+    isDeal: r.isDeal,
+    summary: r.summary,
+    description: r.description,
     createdAt: r.createdAt,
-    category: r.categoryName ? { name: r.categoryName, id: r.categoryId } : null,
+    updatedAt: r.updatedAt,
+    category: r.categoryName
+      ? {
+          id: r.categoryId,
+          name: r.categoryName,
+          slug: r.categorySlug,
+          image: r.categoryImage,
+          isActive: r.categoryIsActive,
+          departmentId: r.categoryDepartmentId,
+          description: r.categoryDescription ?? null,
+          bannerImage: r.categoryBannerImage ?? null,
+        }
+      : null,
     brand: r.brandTitle ? { title: r.brandTitle, id: r.brandId } : null,
   }));
   return c.json(shaped);
@@ -253,12 +282,31 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
 
   const rows = await db
     .select({
-      ...productsTable,
+      id: productsTable.id,
+      name: productsTable.name,
+      slug: productsTable.slug,
+      imageUrl: productsTable.imageUrl,
+      productImages: productsTable.productImages,
+      frequentlyBoughtTogetherItemIds: productsTable.frequentlyBoughtTogetherItemIds,
+      description: productsTable.description,
+      summary: productsTable.summary,
+      isActive: productsTable.isActive,
+      isFeatured: productsTable.isFeatured,
+      isDeal: productsTable.isDeal,
+      price: productsTable.price,
+      buyingPrice: productsTable.buyingPrice,
+      dealPrice: productsTable.dealPrice,
+      stockQty: productsTable.stockQty,
+      lowStockAlert: productsTable.lowStockAlert,
+      discount: productsTable.discount,
+      categoryId: productsTable.categoryId,
+      brandId: productsTable.brandId,
+      createdAt: productsTable.createdAt,
+      updatedAt: productsTable.updatedAt,
       categoryName: categories.name,
       categorySlug: categories.slug,
       brandTitle: brands.title,
     })
-    // @ts-expect-error drizzle spreads
     .from(productsTable)
     .leftJoin(categories, eq(productsTable.categoryId, categories.id))
     .leftJoin(brands, eq(productsTable.brandId, brands.id))

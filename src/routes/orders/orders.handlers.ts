@@ -57,7 +57,7 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
         dateFilter = { createdAt: { gte: today } };
     }
 
-    let baseQuery = db
+    const baseQuery = db
       .select({
         id: ordersTable.id,
         orderNumber: ordersTable.orderNumber,
@@ -71,12 +71,12 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
       })
       .from(ordersTable)
       .leftJoin(usersTable, eq(ordersTable.userId, usersTable.id));
-
-    if ((dateFilter as any).createdAt?.gte) {
-      baseQuery = baseQuery.where(sql`${ordersTable.createdAt} >= ${(dateFilter as any).createdAt.gte}`);
-    }
-
-    const rows = await baseQuery.orderBy(desc(ordersTable.createdAt));
+    const rows = await baseQuery
+      .where(() => {
+        const gte = (dateFilter as any).createdAt?.gte as Date | undefined;
+        return gte ? sql`${ordersTable.createdAt} >= ${gte}` : undefined;
+      })
+      .orderBy(desc(ordersTable.createdAt));
 
     const orderIds = rows.map((r) => r.id);
     const items = orderIds.length
@@ -192,7 +192,7 @@ export const recent: AppRouteHandler<RecentOrderRoute> = async (c) => {
     .leftJoin(usersTable, eq(ordersTable.userId, usersTable.id))
     .orderBy(desc(ordersTable.createdAt))
     .limit(4);
-  const shaped = rows.map((r) => ({ id: r.id, paymentStatus: r.paymentStatus, orderNumber: r.orderNumber, totalOrderAmount: r.totalOrderAmount, user: { name: r.userName } }));
+  const shaped = rows.map((r) => ({ id: r.id, paymentStatus: r.paymentStatus, orderNumber: r.orderNumber, totalOrderAmount: r.totalOrderAmount, user: { name: r.userName ?? "" } }));
   return c.json(shaped, HttpStatusCodes.OK);
 };
 

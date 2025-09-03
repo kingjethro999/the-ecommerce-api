@@ -20,5 +20,18 @@
   },
   "tsc-alias": {
     "resolveFullPaths": true
-  }
+  },
+  "include": [
+    "src",
+    "drizzle.config.ts",
+    "scripts/**/*.ts",
+    "api/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "prisma",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
 }
